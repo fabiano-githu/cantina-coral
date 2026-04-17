@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Controle de Doações - Cantina Coral Louvor Vida">
+    <title>Cantina Coral Louvor Vida | Controle de Doações</title>
+    
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- CSS Custom -->
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark      shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+                <i class="bi bi-heart-fill me-2 fs-3"></i>
+                Cantina Coral Louvor Vida
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <span class="nav-link text-white-50 small">Controle de Doações em Tempo Real</span>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button onclick="resetarTodasDoacoes()" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-arrow-counterclockwise"></i> Resetar (Demo)
+                        </button>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a href="#" onclick="toggleFirebaseMode()" class="btn btn-light btn-sm d-flex align-items-center" id="firebase-status">
+                            <i class="bi bi-cloud me-1"></i>
+                            <span id="firebase-mode-text">LocalStorage</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="bg-white py-5 border-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold text-primary mb-2">Controle de Doações</h1>
+                    <p class="lead text-muted mb-0">Apoie a cantina do Coral Louvor e Vida — escolha um item e participe.</p>
+                    <p class="text-success mt-2"><i class="bi bi-check-circle-fill"></i> Atualização em tempo real com Firebase (opcional)</p>
+                </div>
+                <div class="col-lg-4 text-end d-none d-lg-block">
+                    <div class="d-flex justify-content-end gap-3">
+                        <div class="text-center">
+                            <i class="bi bi-people-fill display-5 text-primary"></i>
+                            <h5 class="mt-2 mb-0">Comunidade</h5>
+                            <small class="text-muted">Unidos em louvor</small>
+                        </div>
+                        <div class="vr"></div>
+                        <div class="text-center">
+                            <i class="bi bi-gift-fill display-5 text-primary"></i>
+                            <h5 class="mt-2 mb-0" id="contador-doacoes">0</h5>
+                            <small class="text-muted">Itens doados</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 mb-0">Itens disponíveis para doação</h2>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success d-flex align-items-center">
+                    <i class="bi bi-circle-fill me-1"></i> Disponível
+                </span>
+                <span class="badge bg-danger d-flex align-items-center">
+                    <i class="bi bi-circle-fill me-1"></i> Indisponível
+                </span>
+            </div>
+        </div>
+
+        <!-- Container dos Cards (preenchido via JS) -->
+        <div id="items-container" class="row g-4"></div>
+    </main>
+
+    <!-- Modal de Doação -->
+    <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="donationModalLabel">Confirmar Doação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-item-name" class="fw-semibold mb-3"></p>
+                    <label for="donorName" class="form-label">Seu nome completo:</label>
+                    <input type="text" class="form-control form-control-lg" id="donorName" placeholder="Ex: João da Silva" autocomplete="name" required>
+                    <small class="text-muted">Este nome aparecerá publicamente no card.</small>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" onclick="confirmarDoacao()" class="btn btn-success px-5">
+                        <i class="bi bi-heart-fill me-1"></i> Confirmar Doação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark        text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2026 Cantina Coral Louvor Vida • Rio de Janeiro, RJ</p>
+                    <small class="opacity-75">Sistema de controle de doações • Desenvolvido com ❤️ para a obra de Deus</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="opacity-75">
+                        Funciona offline com localStorage • 
+                        <a href="#" onclick="mostrarInstrucoesFirebase()" class="text-white text-decoration-underline">Integração Firebase em tempo real</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Firebase SDK (compat) - Carregado sempre, mas só usado se ativado -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
