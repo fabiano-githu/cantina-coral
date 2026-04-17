@@ -8,27 +8,42 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-body { background: #0f172a; color: white; }
-.card { transition: 0.3s; }
-.card:hover { transform: scale(1.02); }
+    body { 
+        background: #0f172a; 
+        color: white; 
+        font-family: system-ui, sans-serif;
+    }
+    .card { 
+        transition: 0.3s; 
+    }
+    .card:hover { 
+        transform: scale(1.02); 
+    }
+    .disponivel {
+        background-color: #1e40af;
+    }
+    .indisponivel {
+        background-color: #334155;
+        opacity: 0.9;
+    }
 </style>
 </head>
 
 <body class="p-4">
 
 <h1 class="text-3xl font-bold text-center mb-4">
-🍽️ Cantina Coral Louvor Vida
+    🍽️ Cantina Coral Louvor Vida
 </h1>
 
 <p class="text-center mb-6 text-gray-300">
-Escolha um item e faça sua doação ❤️
+    Escolha um item e faça sua doação ❤️
 </p>
 
 <!-- CONTADORES -->
-<div class="flex justify-center gap-6 mb-6">
-<div>Disponíveis: <span id="disponiveis">0</span></div>
-<div>Doados: <span id="doados">0</span></div>
-<div>Total: <span id="total">0</span></div>
+<div class="flex justify-center gap-6 mb-6 text-lg">
+    <div>Disponíveis: <span id="disponiveis" class="font-bold text-green-400">0</span></div>
+    <div>Doados: <span id="doados" class="font-bold text-red-400">0</span></div>
+    <div>Total: <span id="total" class="font-bold">0</span></div>
 </div>
 
 <!-- LISTA -->
@@ -36,17 +51,23 @@ Escolha um item e faça sua doação ❤️
 
 <!-- MODAL -->
 <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center">
-<div class="bg-white text-black p-6 rounded w-80">
-<h2 id="modalTitulo" class="text-lg font-bold mb-4"></h2>
+    <div class="bg-white text-black p-6 rounded-xl w-80 max-w-[90%]">
+        <h2 id="modalTitulo" class="text-xl font-bold mb-4"></h2>
 
-<input id="nomeDoador" placeholder="Seu nome"
-class="w-full border p-2 mb-4">
+        <input id="nomeDoador" placeholder="Seu nome completo" 
+               class="w-full border border-gray-300 p-3 rounded mb-4 text-lg">
 
-<div class="flex justify-end gap-2">
-<button onclick="fecharModal()" class="bg-gray-400 px-3 py-1 rounded">Cancelar</button>
-<button onclick="confirmarDoacao()" class="bg-green-600 text-white px-3 py-1 rounded">Confirmar</button>
-</div>
-</div>
+        <div class="flex justify-end gap-3">
+            <button onclick="fecharModal()" 
+                    class="bg-gray-400 hover:bg-gray-500 px-5 py-2 rounded text-white">
+                Cancelar
+            </button>
+            <button onclick="confirmarDoacao()" 
+                    class="bg-green-600 hover:bg-green-700 px-5 py-2 rounded text-white">
+                Confirmar Doação
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- FIREBASE -->
@@ -54,139 +75,149 @@ class="w-full border p-2 mb-4">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
+// ==================== CONFIGURE AQUI ====================
 const firebaseConfig = {
   apiKey: "SUA_API_KEY",
   authDomain: "SEU_PROJETO.firebaseapp.com",
   databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
   projectId: "SEU_PROJETO"
 };
+// =======================================================
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ITENS (mantendo duplicados)
+// ITENS
 const baseItens = [
-{ id:1, nome:"1kg de filé de frango"},
-{ id:2, nome:"1kg de filé de frango"},
-{ id:3, nome:"1kg de filé de frango"},
-{ id:4, nome:"1kg Farinha de trigo (Rosa Branca)"},
-{ id:5, nome:"1kg Farinha de trigo (Rosa Branca)"},
-{ id:6, nome:"1kg Farinha de trigo (Rosa Branca)"},
-{ id:7, nome:"1 pote 500 gramas Margarina (Delícia)"},
-{ id:8, nome:"1 pote 500 gramas Margarina (Delícia)"},
-{ id:9, nome:"1 pote 500 gramas Margarina (Delícia)"},
-{ id:10, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
-{ id:11, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
-{ id:12, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
-{ id:13, nome:"3 sachês de molho tomate 250ml(Promessa) + 2 cheiros-verde"},
-{ id:14, nome:"3 Cebolas + 100 gramas de lemon pepper"}
+    { id:1, nome:"1kg de filé de frango"},
+    { id:2, nome:"1kg de filé de frango"},
+    { id:3, nome:"1kg de filé de frango"},
+    { id:4, nome:"1kg Farinha de trigo (Rosa Branca)"},
+    { id:5, nome:"1kg Farinha de trigo (Rosa Branca)"},
+    { id:6, nome:"1kg Farinha de trigo (Rosa Branca)"},
+    { id:7, nome:"1 pote 500 gramas Margarina (Delícia)"},
+    { id:8, nome:"1 pote 500 gramas Margarina (Delícia)"},
+    { id:9, nome:"1 pote 500 gramas Margarina (Delícia)"},
+    { id:10, nome:"1 garrafa 200ml Guaraná (Antártica)"},
+    { id:11, nome:"1 garrafa 200ml Guaraná (Antártica)"},
+    { id:12, nome:"1 garrafa 200ml Guaraná (Antártica)"},
+    { id:13, nome:"3 sachês de molho tomate 250ml(Promessa) + 2 cheiros-verde"},
+    { id:14, nome:"3 Cebolas + 100 gramas de lemon pepper"}
 ];
 
 let itens = [];
 let itemSelecionado = null;
 
 function iniciarItens() {
-  itens = baseItens.map(i => ({
-    ...i,
-    disponivel: true,
-    doadoPor: null
-  }));
+    itens = baseItens.map(i => ({
+        ...i,
+        disponivel: true,
+        doadoPor: null
+    }));
 }
 
-// 🔥 TEMPO REAL
+// 🔥 Atualização em tempo real
 db.ref("doacoes").on("value", snapshot => {
-  const dados = snapshot.val() || {};
+    const dados = snapshot.val() || {};
 
-  iniciarItens();
+    iniciarItens();   // reinicia a lista base
 
-  Object.keys(dados).forEach(id => {
-    let item = itens.find(i => i.id == id);
-    if (item) {
-      item.disponivel = false;
-      item.doadoPor = dados[id].nome;
-    }
-  });
+    // Atualiza os itens que já foram doados
+    Object.keys(dados).forEach(id => {
+        let item = itens.find(i => i.id == id);
+        if (item) {
+            item.disponivel = false;
+            item.doadoPor = dados[id].nome;
+        }
+    });
 
-  renderizar();
-  atualizarContadores();
+    renderizar();
+    atualizarContadores();
 });
 
-// RENDER
+// RENDERIZAÇÃO
 function renderizar() {
-  const lista = document.getElementById("lista");
-  lista.innerHTML = "";
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
 
-  itens.forEach(item => {
-    const div = document.createElement("div");
+    itens.forEach(item => {
+        const div = document.createElement("div");
+        
+        div.className = `card p-5 rounded-xl text-white ${item.disponivel ? 'disponivel' : 'indisponivel'}`;
 
-    div.className = `card p-4 rounded ${
-      item.disponivel ? "bg-blue-600" : "bg-gray-600"
-    }`;
+        div.innerHTML = `
+            <h3 class="font-bold text-lg mb-2">${item.nome}</h3>
+            <p class="text-sm mb-4 min-h-[40px]">
+                ${item.disponivel 
+                    ? '<span class="text-green-300">✓ Disponível</span>' 
+                    : '<span class="text-red-300">Doado por: ' + item.doadoPor + '</span>'}
+            </p>
+            <button
+                onclick="abrirModal(${item.id})"
+                class="w-full py-3 rounded-xl font-medium text-base transition-all ${item.disponivel 
+                    ? 'bg-green-500 hover:bg-green-600 active:bg-green-700' 
+                    : 'bg-gray-500 cursor-not-allowed'}"
+                ${!item.disponivel ? 'disabled' : ''}
+            >
+                ${item.disponivel ? 'FAZER DOAÇÃO' : 'JÁ DOADO'}
+            </button>
+        `;
 
-    div.innerHTML = `
-      <h3 class="font-bold">${item.nome}</h3>
-      <p class="text-sm">
-        ${item.disponivel ? "Disponível" : "Doado por " + item.doadoPor}
-      </p>
-      <button
-        class="mt-2 px-3 py-1 rounded ${
-          item.disponivel ? "bg-green-500" : "bg-gray-400"
-        }"
-        ${!item.disponivel ? "disabled" : ""}
-        onclick="abrirModal(${item.id})"
-      >
-        Doar
-      </button>
-    `;
-
-    lista.appendChild(div);
-  });
+        lista.appendChild(div);
+    });
 }
 
 // MODAL
 function abrirModal(id) {
-  itemSelecionado = itens.find(i => i.id === id);
-  document.getElementById("modal").classList.remove("hidden");
-  document.getElementById("modalTitulo").innerText = itemSelecionado.nome;
+    itemSelecionado = itens.find(i => i.id === id);
+    if (!itemSelecionado || !itemSelecionado.disponivel) return;
+
+    document.getElementById("modal").classList.remove("hidden");
+    document.getElementById("modalTitulo").innerText = itemSelecionado.nome;
+    document.getElementById("nomeDoador").value = "";
+    document.getElementById("nomeDoador").focus();
 }
 
 function fecharModal() {
-  document.getElementById("modal").classList.add("hidden");
+    document.getElementById("modal").classList.add("hidden");
 }
 
-// DOAR
+// CONFIRMAR DOAÇÃO
 function confirmarDoacao() {
-  const nome = document.getElementById("nomeDoador").value;
+    const nome = document.getElementById("nomeDoador").value.trim();
 
-  if (!nome) {
-    alert("Digite seu nome");
-    return;
-  }
+    if (!nome) {
+        alert("Por favor, digite seu nome completo.");
+        return;
+    }
 
-  db.ref("doacoes/" + itemSelecionado.id).set({
-    nome: nome
-  });
+    // Salva no Firebase
+    db.ref("doacoes/" + itemSelecionado.id).set({
+        nome: nome,
+        data: new Date().toISOString()
+    });
 
-  fecharModal();
+    fecharModal();
 }
 
 // CONTADORES
 function atualizarContadores() {
-  document.getElementById("disponiveis").innerText =
-    itens.filter(i => i.disponivel).length;
+    const disponiveis = itens.filter(i => i.disponivel).length;
+    const doados = itens.filter(i => !i.disponivel).length;
 
-  document.getElementById("doados").innerText =
-    itens.filter(i => !i.disponivel).length;
-
-  document.getElementById("total").innerText = itens.length;
+    document.getElementById("disponiveis").innerText = disponiveis;
+    document.getElementById("doados").innerText = doados;
+    document.getElementById("total").innerText = itens.length;
 }
 
-// RESET (opcional)
+// RESET (caso precise limpar tudo)
 function resetar() {
-  db.ref("doacoes").remove();
+    if (confirm("Limpar todas as doações?")) {
+        db.ref("doacoes").remove();
+    }
 }
 
-// START
+// INICIAR
 iniciarItens();
 renderizar();
 atualizarContadores();
