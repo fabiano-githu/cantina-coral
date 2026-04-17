@@ -147,6 +147,29 @@
     </div>
 
     <script>
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBI01dIolzdfyf1vNkb6XLfxjektm-izp8",
+            authDomain: "cantina-doacoes.firebaseapp.com",
+            databaseURL: "https://cantina-doacoes-default-rtdb.firebaseio.com",
+            projectId: "cantina-doacoes",
+            storageBucket: "cantina-doacoes.firebasestorage.app",
+            messagingSenderId: "436779280606",
+            appId: "1:436779280606:web:cb6cf8c50fa4026552ba4f"
+        };
+
+        db.ref("doacoes").on("value", (snapshot) => {
+        const dados = snapshot.val();
+
+        console.log("DOAÇÕES ATUALIZADAS:", dados);
+
+        // aqui você atualiza sua lista na tela
+        });
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+
         let itens = [];
 
         const initialItems = [
