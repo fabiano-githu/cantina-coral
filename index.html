@@ -3,145 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Controle de Doações - Cantina Coral Louvor Vida">
-    <title>Cantina Coral Louvor Vida | Controle de Doações</title>
-    
-    <!-- Bootstrap 5.3.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <!-- CSS Custom -->
-    <link rel="stylesheet" href="css/index.css">
+    <title>Cantina Coral • Doações</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Open Sans', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e0d4ff 100%);
+        }
+        
+        .header-bg {
+            background: linear-gradient(90deg, #6b46c1, #c026d3);
+        }
+        
+        tr {
+            transition: all 0.4s ease;
+        }
+        
+        tr:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(107, 70, 193, 0.25);
+        }
+        
+        .indisponivel {
+            background-color: #fee2e2 !important;
+            color: #991b1b;
+        }
+        
+        .big-text {
+            font-size: 1.35rem;
+            line-height: 1.55;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark      shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-                <i class="bi bi-heart-fill me-2 fs-3"></i>
-                Cantina Coral Louvor Vida
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center">
-                    <li class="nav-item">
-                        <span class="nav-link text-white-50 small">Controle de Doações em Tempo Real</span>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button onclick="resetarTodasDoacoes()" class="btn btn-outline-light btn-sm">
-                            <i class="bi bi-arrow-counterclockwise"></i> Resetar (Demo)
-                        </button>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <a href="#" onclick="toggleFirebaseMode()" class="btn btn-light btn-sm d-flex align-items-center" id="firebase-status">
-                            <i class="bi bi-cloud me-1"></i>
-                            <span id="firebase-mode-text">LocalStorage</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body class="min-h-screen pb-12">
 
-    <!-- Hero -->
-    <header class="bg-white py-5 border-bottom">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold text-primary mb-2">Controle de Doações</h1>
-                    <p class="lead text-muted mb-0">Apoie a cantina do Coral Louvor e Vida — escolha um item e participe.</p>
-                    <p class="text-success mt-2"><i class="bi bi-check-circle-fill"></i> Atualização em tempo real com Firebase (opcional)</p>
-                </div>
-                <div class="col-lg-4 text-end d-none d-lg-block">
-                    <div class="d-flex justify-content-end gap-3">
-                        <div class="text-center">
-                            <i class="bi bi-people-fill display-5 text-primary"></i>
-                            <h5 class="mt-2 mb-0">Comunidade</h5>
-                            <small class="text-muted">Unidos em louvor</small>
-                        </div>
-                        <div class="vr"></div>
-                        <div class="text-center">
-                            <i class="bi bi-gift-fill display-5 text-primary"></i>
-                            <h5 class="mt-2 mb-0" id="contador-doacoes">0</h5>
-                            <small class="text-muted">Itens doados</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Cabeçalho -->
+    <div class="header-bg text-white py-10 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold flex items-center justify-center gap-4">
+                🍽️ Cantina Coral
+            </h1>
+            <p class="text-3xl mt-3">Lista de Produtos para Doação</p>
+            <p class="mt-6 text-2xl">Entregas até <strong>10 de maio de 2026</strong></p>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h3 mb-0">Itens disponíveis para doação</h2>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-success d-flex align-items-center">
-                    <i class="bi bi-circle-fill me-1"></i> Disponível
-                </span>
-                <span class="badge bg-danger d-flex align-items-center">
-                    <i class="bi bi-circle-fill me-1"></i> Indisponível
-                </span>
+    <div class="max-w-7xl mx-auto px-6 py-10">
+
+        <!-- Contadores -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white rounded-3xl shadow-xl p-8 text-center">
+                <p class="text-purple-600 text-2xl font-medium">Disponíveis</p>
+                <p id="disponiveis" class="text-7xl font-bold text-purple-700 mt-2">14</p>
+            </div>
+            <div class="bg-white rounded-3xl shadow-xl p-8 text-center">
+                <p class="text-rose-600 text-2xl font-medium">Já Doados</p>
+                <p id="doados" class="text-7xl font-bold text-rose-600 mt-2">0</p>
+            </div>
+            <div class="bg-white rounded-3xl shadow-xl p-8 text-center">
+                <p class="text-emerald-600 text-2xl font-medium">Total</p>
+                <p id="total" class="text-7xl font-bold text-emerald-600 mt-2">14</p>
             </div>
         </div>
 
-        <!-- Container dos Cards (preenchido via JS) -->
-        <div id="items-container" class="row g-4"></div>
-    </main>
+        <!-- Tabela -->
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-6 border-b bg-gradient-to-r from-purple-100 to-pink-100 flex justify-between items-center">
+                <h2 class="text-3xl font-bold text-purple-800 flex items-center gap-3">
+                    <i class="fas fa-list"></i> Produtos para Doação
+                </h2>
+                <button onclick="resetarTudo()" 
+                        class="text-red-600 hover:text-red-700 text-sm flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Limpar todas as doações
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="tabelaDoacoes">
+                    <thead class="bg-purple-700 text-white">
+                        <tr>
+                            <th class="px-6 py-5 text-xl font-semibold w-16">Nº</th>
+                            <th class="px-6 py-5 text-xl font-semibold">Produto</th>
+                            <th class="px-6 py-5 text-xl font-semibold">Quantidade</th>
+                            <th class="px-6 py-5 text-xl font-semibold">Unidade</th>
+                            <th class="px-6 py-5 text-xl font-semibold">Doado por</th>
+                            <th class="px-6 py-5 text-xl font-semibold text-center w-40">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-lg divide-y" id="corpoTabela"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <!-- Modal de Doação -->
-    <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="donationModalLabel">Confirmar Doação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 p-8">
+            <h3 class="text-3xl font-bold text-purple-800 mb-6" id="modalTitulo">Confirmar Doação</h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-xl font-medium text-gray-700 mb-2">Seu Nome Completo</label>
+                    <input id="nomeDoador" type="text" 
+                           class="w-full border-2 border-purple-300 rounded-2xl px-6 py-5 text-xl focus:outline-none focus:border-purple-600"
+                           placeholder="Ex: Maria Oliveira">
                 </div>
-                <div class="modal-body">
-                    <p id="modal-item-name" class="fw-semibold mb-3"></p>
-                    <label for="donorName" class="form-label">Seu nome completo:</label>
-                    <input type="text" class="form-control form-control-lg" id="donorName" placeholder="Ex: João da Silva" autocomplete="name" required>
-                    <small class="text-muted">Este nome aparecerá publicamente no card.</small>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" onclick="confirmarDoacao()" class="btn btn-success px-5">
-                        <i class="bi bi-heart-fill me-1"></i> Confirmar Doação
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="fecharModal()" 
+                            class="py-6 text-xl font-semibold rounded-2xl border-2 border-gray-300 hover:bg-gray-100">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmarDoacao()" 
+                            class="py-6 text-xl font-semibold rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:brightness-110">
+                        Confirmar Doação
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark        text-white py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; 2026 Cantina Coral Louvor Vida • Rio de Janeiro, RJ</p>
-                    <small class="opacity-75">Sistema de controle de doações • Desenvolvido com ❤️ para a obra de Deus</small>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <small class="opacity-75">
-                        Funciona offline com localStorage • 
-                        <a href="#" onclick="mostrarInstrucoesFirebase()" class="text-white text-decoration-underline">Integração Firebase em tempo real</a>
-                    </small>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <script>
+        let itens = [];
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-    <!-- Firebase SDK (compat) - Carregado sempre, mas só usado se ativado -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    
-    <script src="js/script.js"></script>
+        const initialItems = [ /* sua lista completa */ 
+            { id: 1,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
+            { id: 2,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
+            { id: 3,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
+            { id: 4,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
+            { id: 5,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
+            { id: 6,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
+            { id: 7,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
+            { id: 8,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
+            { id: 9,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
+            { id: 10, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
+            { id: 11, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
+            { id: 12, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
+            { id: 13, nome: "3 Molho de tomate + 2 cheiro-verde", quantidade: "3 sachês", unidade: "kit", disponivel: true, doadoPor: null },
+            { id: 14, nome: "3 Cebola + lemon pepper",          quantidade: "100g",  unidade: "kit",    disponivel: true, doadoPor: null }
+        ];
+
+        // Carregar dados salvos ou usar a lista inicial
+        function carregarDados() {
+            const salvos = localStorage.getItem('doacoesCantinaCoral');
+            if (salvos) {
+                itens = JSON.parse(salvos);
+            } else {
+                itens = JSON.parse(JSON.stringify(initialItems)); // cópia profunda
+            }
+        }
+
+        function salvarDados() {
+            localStorage.setItem('doacoesCantinaCoral', JSON.stringify(itens));
+        }
+
+        function atualizarContadores() {
+            const disponiveis = itens.filter(i => i.disponivel).length;
+            const doados = itens.filter(i => !i.disponivel).length;
+            
+            document.getElementById('disponiveis').textContent = disponiveis;
+            document.getElementById('doados').textContent = doados;
+            document.getElementById('total').textContent = itens.length;
+        }
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('corpoTabela');
+            tbody.innerHTML = '';
+
+            itens.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = `border-b last:border-none ${!item.disponivel ? 'indisponivel' : ''}`;
+                
+                tr.innerHTML = `
+                    <td class="px-6 py-6 big-text font-medium">${item.id}</td>
+                    <td class="px-6 py-6 big-text">${item.nome}</td>
+                    <td class="px-6 py-6 big-text">${item.quantidade}</td>
+                    <td class="px-6 py-6 big-text">${item.unidade}</td>
+                    <td class="px-6 py-6 big-text font-medium ${item.doadoPor ? 'text-red-600' : 'text-purple-600'}">
+                        ${item.doadoPor ? item.doadoPor : '<span class="italic">Disponível</span>'}
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        ${item.disponivel ? 
+                            `<button onclick="abrirModal(${item.id})" 
+                                    class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-4 rounded-2xl text-xl font-semibold transition shadow-md">
+                                Vou Doar
+                            </button>` 
+                            : 
+                            `<span class="inline-flex items-center gap-2 text-red-600 font-bold text-xl">
+                                <i class="fas fa-check-circle"></i> DOADO
+                            </span>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        let itemSelecionado = null;
+
+        function abrirModal(id) {
+            itemSelecionado = itens.find(i => i.id === id);
+            if (!itemSelecionado || !itemSelecionado.disponivel) return;
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modalTitulo').textContent = `Doar: ${itemSelecionado.nome}`;
+            document.getElementById('nomeDoador').value = '';
+            document.getElementById('nomeDoador').focus();
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        function confirmarDoacao() {
+            const nome = document.getElementById('nomeDoador').value.trim();
+            
+            if (!nome) {
+                alert("Por favor, digite seu nome completo.");
+                return;
+            }
+
+            itemSelecionado.disponivel = false;
+            itemSelecionado.doadoPor = nome;
+
+            salvarDados();           // ← Salva automaticamente
+            fecharModal();
+            renderizarTabela();
+            atualizarContadores();
+
+            setTimeout(() => {
+                alert(`✅ Obrigado, ${nome}!\nSua doação foi registrada com sucesso.`);
+            }, 300);
+        }
+
+        function resetarTudo() {
+            if (confirm("Tem certeza que deseja apagar TODAS as doações e voltar ao estado inicial?")) {
+                localStorage.removeItem('doacoesCantinaCoral');
+                itens = JSON.parse(JSON.stringify(initialItems));
+                renderizarTabela();
+                atualizarContadores();
+            }
+        }
+
+        // Inicializar
+        window.onload = () => {
+            carregarDados();
+            renderizarTabela();
+            atualizarContadores();
+        };
+    </script>
 </body>
 </html>
