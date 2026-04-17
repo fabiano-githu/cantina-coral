@@ -75,13 +75,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
+// Configuração Firebase
+const firebaseConfig = {
     apiKey: "AIzaSyBI01dIolzdfyf1vNkb6XLfxjektm-izp8",
     authDomain: "cantina-doacoes.firebaseapp.com",
     databaseURL: "https://cantina-doacoes-default-rtdb.firebaseio.com",
@@ -89,11 +84,11 @@
     storageBucket: "cantina-doacoes.firebasestorage.app",
     messagingSenderId: "436779280606",
     appId: "1:436779280606:web:fb352073a839ea6b52ba4f"
-  };
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 // ITENS
 const baseItens = [
     { id:1, nome:"1kg de filé de frango"},
@@ -123,26 +118,7 @@ function iniciarItens() {
     }));
 }
 
-// 🔥 Atualização em tempo real
-db.ref("doacoes").on("value", snapshot => {
-    const dados = snapshot.val() || {};
-
-    iniciarItens();   // reinicia a lista base
-
-    // Atualiza os itens que já foram doados
-    Object.keys(dados).forEach(id => {
-        let item = itens.find(i => i.id == id);
-        if (item) {
-            item.disponivel = false;
-            item.doadoPor = dados[id].nome;
-        }
-    });
-
-    renderizar();
-    atualizarContadores();
-});
-
-// RENDERIZAÇÃO
+// Renderizar os cards
 function renderizar() {
     const lista = document.getElementById("lista");
     lista.innerHTML = "";
@@ -174,6 +150,34 @@ function renderizar() {
     });
 }
 
+// Atualizar contadores
+function atualizarContadores() {
+    const disponiveis = itens.filter(i => i.disponivel).length;
+    const doados = itens.filter(i => !i.disponivel).length;
+
+    document.getElementById("disponiveis").innerText = disponiveis;
+    document.getElementById("doados").innerText = doados;
+    document.getElementById("total").innerText = itens.length;
+}
+
+// 🔥 Atualização em tempo real do Firebase
+db.ref("doacoes").on("value", snapshot => {
+    const dados = snapshot.val() || {};
+
+    iniciarItens();
+
+    Object.keys(dados).forEach(id => {
+        let item = itens.find(i => i.id == id);
+        if (item) {
+            item.disponivel = false;
+            item.doadoPor = dados[id].nome;
+        }
+    });
+
+    renderizar();
+    atualizarContadores();
+});
+
 // MODAL
 function abrirModal(id) {
     itemSelecionado = itens.find(i => i.id === id);
@@ -198,7 +202,6 @@ function confirmarDoacao() {
         return;
     }
 
-    // Salva no Firebase
     db.ref("doacoes/" + itemSelecionado.id).set({
         nome: nome,
         data: new Date().toISOString()
@@ -207,27 +210,19 @@ function confirmarDoacao() {
     fecharModal();
 }
 
-// CONTADORES
-function atualizarContadores() {
-    const disponiveis = itens.filter(i => i.disponivel).length;
-    const doados = itens.filter(i => !i.disponivel).length;
-
-    document.getElementById("disponiveis").innerText = disponiveis;
-    document.getElementById("doados").innerText = doados;
-    document.getElementById("total").innerText = itens.length;
-}
-
-// RESET (caso precise limpar tudo)
+// RESET (opcional)
 function resetar() {
     if (confirm("Limpar todas as doações?")) {
         db.ref("doacoes").remove();
     }
 }
 
-// INICIAR
-iniciarItens();
-renderizar();
-atualizarContadores();
+// INICIALIZAÇÃO
+window.onload = () => {
+    iniciarItens();
+    renderizar();           // Mostra os cards imediatamente
+    atualizarContadores();
+};
 </script>
 
 </body>
