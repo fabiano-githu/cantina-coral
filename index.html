@@ -1,332 +1,196 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cantina Coral • Doações</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
-        
-        body {
-            font-family: 'Open Sans', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f3e8ff 0%, #e0d4ff 100%);
-        }
-        
-        .header-bg {
-            background: linear-gradient(90deg, #6b46c1, #c026d3);
-        }
-        
-        .big-text {
-            font-size: 1.25rem;
-            line-height: 1.6;
-        }
-        
-        /* Responsivo - Tabela vira cartões no celular */
-        @media (max-width: 768px) {
-            .desktop-table {
-                display: none;
-            }
-            .mobile-card {
-                display: block;
-            }
-        }
-        
-        @media (min-width: 769px) {
-            .desktop-table {
-                display: table;
-            }
-            .mobile-card {
-                display: none;
-            }
-        }
-        
-        .card-item {
-            transition: all 0.3s ease;
-        }
-        
-        .card-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(107, 70, 193, 0.3);
-        }
-        
-        .indisponivel {
-            background-color: #fee2e2 !important;
-            color: #991b1b;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cantina Coral Louvor Vida</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { background: #0f172a; color: white; }
+.card { transition: 0.3s; }
+.card:hover { transform: scale(1.02); }
+</style>
 </head>
-<body class="min-h-screen pb-12">
 
-    <!-- Cabeçalho -->
-    <div class="header-bg text-white py-8 shadow-2xl">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold flex items-center justify-center gap-4">
-                🍽️ Cantina Coral
-            </h1>
-            <p class="text-2xl md:text-3xl mt-3">Lista de Produtos para Doação</p>
-            <p class="mt-4 text-xl md:text-2xl">Entregas até <strong>10 de maio de 2026</strong></p>
-        </div>
-    </div>
+<body class="p-4">
 
-    <div class="max-w-7xl mx-auto px-4 md:px-6 py-8">
+<h1 class="text-3xl font-bold text-center mb-4">
+🍽️ Cantina Coral Louvor Vida
+</h1>
 
-        <!-- Contadores -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white rounded-3xl shadow-xl p-6 text-center">
-                <p class="text-purple-600 text-xl md:text-2xl">Disponíveis</p>
-                <p id="disponiveis" class="text-6xl md:text-7xl font-bold text-purple-700 mt-2">14</p>
-            </div>
-            <div class="bg-white rounded-3xl shadow-xl p-6 text-center">
-                <p class="text-rose-600 text-xl md:text-2xl">Já Doados</p>
-                <p id="doados" class="text-6xl md:text-7xl font-bold text-rose-600 mt-2">0</p>
-            </div>
-            <div class="bg-white rounded-3xl shadow-xl p-6 text-center">
-                <p class="text-emerald-600 text-xl md:text-2xl">Total</p>
-                <p id="total" class="text-6xl md:text-7xl font-bold text-emerald-600 mt-2">14</p>
-            </div>
-        </div>
+<p class="text-center mb-6 text-gray-300">
+Escolha um item e faça sua doação ❤️
+</p>
 
-        <!-- Tabela Desktop + Cartões Mobile -->
-        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-            <div class="p-6 border-b bg-gradient-to-r from-purple-100 to-pink-100 flex justify-between items-center">
-                <h2 class="text-2xl md:text-3xl font-bold text-purple-800">Produtos para Doação</h2>
-                <button onclick="resetarTudo()" class="text-red-600 hover:text-red-700 text-sm flex items-center gap-2">
-                    <i class="fas fa-trash"></i> Limpar tudo
-                </button>
-            </div>
+<!-- CONTADORES -->
+<div class="flex justify-center gap-6 mb-6">
+<div>Disponíveis: <span id="disponiveis">0</span></div>
+<div>Doados: <span id="doados">0</span></div>
+<div>Total: <span id="total">0</span></div>
+</div>
 
-            <!-- Tabela para telas maiores -->
-            <div class="overflow-x-auto desktop-table">
-                <table class="w-full text-left">
-                    <thead class="bg-purple-700 text-white">
-                        <tr>
-                            <th class="px-6 py-5 text-lg font-semibold w-12">Nº</th>
-                            <th class="px-6 py-5 text-lg font-semibold">Produto</th>
-                            <th class="px-6 py-5 text-lg font-semibold">Quantidade</th>
-                            <th class="px-6 py-5 text-lg font-semibold">Unidade</th>
-                            <th class="px-6 py-5 text-lg font-semibold">Doado por</th>
-                            <th class="px-6 py-5 text-lg font-semibold text-center">Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-lg divide-y" id="corpoTabelaDesktop"></tbody>
-                </table>
-            </div>
+<!-- LISTA -->
+<div id="lista" class="grid md:grid-cols-3 gap-4"></div>
 
-            <!-- Cartões para celular -->
-            <div class="mobile-card p-4 space-y-4" id="corpoCartoes"></div>
-        </div>
-    </div>
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center">
+<div class="bg-white text-black p-6 rounded w-80">
+<h2 id="modalTitulo" class="text-lg font-bold mb-4"></h2>
 
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8">
-            <h3 class="text-3xl font-bold text-purple-800 mb-6" id="modalTitulo">Confirmar Doação</h3>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-xl font-medium text-gray-700 mb-3">Seu Nome Completo</label>
-                    <input id="nomeDoador" type="text" 
-                           class="w-full border-2 border-purple-300 rounded-2xl px-6 py-5 text-2xl focus:outline-none focus:border-purple-600"
-                           placeholder="Ex: Maria Silva">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="fecharModal()" 
-                            class="py-6 text-xl font-semibold rounded-2xl border-2 border-gray-300 hover:bg-gray-100">
-                        Cancelar
-                    </button>
-                    <button onclick="confirmarDoacao()" 
-                            class="py-6 text-xl font-semibold rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:brightness-110">
-                        Confirmar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<input id="nomeDoador" placeholder="Seu nome"
+class="w-full border p-2 mb-4">
 
-    <script>
+<div class="flex justify-end gap-2">
+<button onclick="fecharModal()" class="bg-gray-400 px-3 py-1 rounded">Cancelar</button>
+<button onclick="confirmarDoacao()" class="bg-green-600 text-white px-3 py-1 rounded">Confirmar</button>
+</div>
+</div>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBI01dIolzdfyf1vNkb6XLfxjektm-izp8",
-            authDomain: "cantina-doacoes.firebaseapp.com",
-            databaseURL: "https://cantina-doacoes-default-rtdb.firebaseio.com",
-            projectId: "cantina-doacoes",
-            storageBucket: "cantina-doacoes.firebasestorage.app",
-            messagingSenderId: "436779280606",
-            appId: "1:436779280606:web:cb6cf8c50fa4026552ba4f"
-        };
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
-        db.ref("doacoes").on("value", (snapshot) => {
-        const dados = snapshot.val();
+<script>
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+  projectId: "SEU_PROJETO"
+};
 
-        console.log("DOAÇÕES ATUALIZADAS:", dados);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        // aqui você atualiza sua lista na tela
-        });
+// ITENS (mantendo duplicados)
+const baseItens = [
+{ id:1, nome:"1kg de filé de frango"},
+{ id:2, nome:"1kg de filé de frango"},
+{ id:3, nome:"1kg de filé de frango"},
+{ id:4, nome:"1kg Farinha de trigo (Rosa Branca)"},
+{ id:5, nome:"1kg Farinha de trigo (Rosa Branca)"},
+{ id:6, nome:"1kg Farinha de trigo (Rosa Branca)"},
+{ id:7, nome:"1 pote 500 gramas Margarina (Delícia)"},
+{ id:8, nome:"1 pote 500 gramas Margarina (Delícia)"},
+{ id:9, nome:"1 pote 500 gramas Margarina (Delícia)"},
+{ id:10, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
+{ id:11, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
+{ id:12, nome:"1 garrafa 200ml Guaraná pitula(Antártica)"},
+{ id:13, nome:"3 sachês de molho tomate 250ml(Promessa) + 2 cheiros-verde"},
+{ id:14, nome:"3 Cebolas + 100 gramas de lemon pepper"}
+];
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+let itens = [];
+let itemSelecionado = null;
 
+function iniciarItens() {
+  itens = baseItens.map(i => ({
+    ...i,
+    disponivel: true,
+    doadoPor: null
+  }));
+}
 
-        let itens = [];
+// 🔥 TEMPO REAL
+db.ref("doacoes").on("value", snapshot => {
+  const dados = snapshot.val() || {};
 
-        const initialItems = [
-            { id: 1,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
-            { id: 2,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
-            { id: 3,  nome: "1kg de filé de frango",          quantidade: "1kg",   unidade: "bandeja",  disponivel: true,  doadoPor: null },
-            { id: 4,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
-            { id: 5,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
-            { id: 6,  nome: "Farinha de trigo (Rosa Branca)", quantidade: "1kg",   unidade: "pacote",   disponivel: true,  doadoPor: null },
-            { id: 7,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
-            { id: 8,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
-            { id: 9,  nome: "Margarina (Delícia)",            quantidade: "500g",  unidade: "pote",     disponivel: true,  doadoPor: null },
-            { id: 10, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
-            { id: 11, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
-            { id: 12, nome: "Guaraná (Antártica)",            quantidade: "200ml", unidade: "garrafa",  disponivel: true,  doadoPor: null },
-            { id: 13, nome: "3 Molho de tomate + 2 cheiro-verde", quantidade: "3 sachês", unidade: "kit", disponivel: true, doadoPor: null },
-            { id: 14, nome: "3 Cebola + lemon pepper",          quantidade: "100g",  unidade: "kit",    disponivel: true, doadoPor: null }
-        ];
+  iniciarItens();
 
-        function carregarDados() {
-            const salvos = localStorage.getItem('doacoesCantinaCoral');
-            if (salvos) {
-                itens = JSON.parse(salvos);
-            } else {
-                itens = JSON.parse(JSON.stringify(initialItems));
-            }
-        }
+  Object.keys(dados).forEach(id => {
+    let item = itens.find(i => i.id == id);
+    if (item) {
+      item.disponivel = false;
+      item.doadoPor = dados[id].nome;
+    }
+  });
 
-        function salvarDados() {
-            localStorage.setItem('doacoesCantinaCoral', JSON.stringify(itens));
-        }
+  renderizar();
+  atualizarContadores();
+});
 
-        function atualizarContadores() {
-            const disponiveis = itens.filter(i => i.disponivel).length;
-            const doados = itens.filter(i => !i.disponivel).length;
-            document.getElementById('disponiveis').textContent = disponiveis;
-            document.getElementById('doados').textContent = doados;
-            document.getElementById('total').textContent = itens.length;
-        }
+// RENDER
+function renderizar() {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
 
-        function renderizarTudo() {
-            renderizarDesktop();
-            renderizarMobile();
-        }
+  itens.forEach(item => {
+    const div = document.createElement("div");
 
-        function renderizarDesktop() {
-            const tbody = document.getElementById('corpoTabelaDesktop');
-            tbody.innerHTML = '';
+    div.className = `card p-4 rounded ${
+      item.disponivel ? "bg-blue-600" : "bg-gray-600"
+    }`;
 
-            itens.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = `border-b last:border-none ${!item.disponivel ? 'indisponivel' : ''}`;
-                tr.innerHTML = `
-                    <td class="px-6 py-6 big-text font-medium">${item.id}</td>
-                    <td class="px-6 py-6 big-text">${item.nome}</td>
-                    <td class="px-6 py-6 big-text">${item.quantidade}</td>
-                    <td class="px-6 py-6 big-text">${item.unidade}</td>
-                    <td class="px-6 py-6 big-text font-medium ${item.doadoPor ? 'text-red-600' : 'text-purple-600'}">
-                        ${item.doadoPor ? item.doadoPor : '<span class="italic">Disponível</span>'}
-                    </td>
-                    <td class="px-6 py-6 text-center">
-                        ${item.disponivel ? 
-                            `<button onclick="abrirModal(${item.id})" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:brightness-110">Vou Doar</button>` 
-                            : `<span class="text-red-600 font-bold flex items-center justify-center gap-2"><i class="fas fa-check-circle"></i> DOADO</span>`
-                        }
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+    div.innerHTML = `
+      <h3 class="font-bold">${item.nome}</h3>
+      <p class="text-sm">
+        ${item.disponivel ? "Disponível" : "Doado por " + item.doadoPor}
+      </p>
+      <button
+        class="mt-2 px-3 py-1 rounded ${
+          item.disponivel ? "bg-green-500" : "bg-gray-400"
+        }"
+        ${!item.disponivel ? "disabled" : ""}
+        onclick="abrirModal(${item.id})"
+      >
+        Doar
+      </button>
+    `;
 
-        function renderizarMobile() {
-            const container = document.getElementById('corpoCartoes');
-            container.innerHTML = '';
+    lista.appendChild(div);
+  });
+}
 
-            itens.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `card-item bg-white border-2 ${!item.disponivel ? 'border-red-300 bg-red-50' : 'border-purple-200'} rounded-3xl p-6 shadow`;
-                
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-purple-700 font-bold text-2xl">#${item.id}</span>
-                            <h3 class="text-2xl font-semibold mt-2">${item.nome}</h3>
-                            <p class="text-xl text-gray-600">${item.quantidade} • ${item.unidade}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 pt-6 border-t">
-                        <p class="text-lg text-gray-700">Doado por:</p>
-                        <p class="text-2xl font-medium ${item.doadoPor ? 'text-red-600' : 'text-purple-600 italic'}">
-                            ${item.doadoPor ? item.doadoPor : 'Disponível'}
-                        </p>
-                    </div>
-                    
-                    <div class="mt-8">
-                        ${item.disponivel ? 
-                            `<button onclick="abrirModal(${item.id})" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-6 rounded-2xl text-2xl font-semibold">Vou Doar este item</button>` 
-                            : `<div class="w-full py-6 text-center text-red-600 font-bold text-2xl flex items-center justify-center gap-3"><i class="fas fa-check-circle"></i> JÁ DOADO</div>`
-                        }
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+// MODAL
+function abrirModal(id) {
+  itemSelecionado = itens.find(i => i.id === id);
+  document.getElementById("modal").classList.remove("hidden");
+  document.getElementById("modalTitulo").innerText = itemSelecionado.nome;
+}
 
-        let itemSelecionado = null;
+function fecharModal() {
+  document.getElementById("modal").classList.add("hidden");
+}
 
-        function abrirModal(id) {
-            itemSelecionado = itens.find(i => i.id === id);
-            if (!itemSelecionado || !itemSelecionado.disponivel) return;
-            
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modalTitulo').textContent = `Doar: ${itemSelecionado.nome}`;
-            document.getElementById('nomeDoador').value = '';
-            document.getElementById('nomeDoador').focus();
-        }
+// DOAR
+function confirmarDoacao() {
+  const nome = document.getElementById("nomeDoador").value;
 
-        function fecharModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
+  if (!nome) {
+    alert("Digite seu nome");
+    return;
+  }
 
-        function confirmarDoacao() {
-            const nome = document.getElementById('nomeDoador').value.trim();
-            if (!nome) {
-                alert("Por favor, digite seu nome completo.");
-                return;
-            }
+  db.ref("doacoes/" + itemSelecionado.id).set({
+    nome: nome
+  });
 
-            itemSelecionado.disponivel = false;
-            itemSelecionado.doadoPor = nome;
+  fecharModal();
+}
 
-            salvarDados();
-            fecharModal();
-            renderizarTudo();
-            atualizarContadores();
+// CONTADORES
+function atualizarContadores() {
+  document.getElementById("disponiveis").innerText =
+    itens.filter(i => i.disponivel).length;
 
-            setTimeout(() => {
-                alert(`✅ Obrigado, ${nome}!\nDoação registrada com sucesso!`);
-            }, 300);
-        }
+  document.getElementById("doados").innerText =
+    itens.filter(i => !i.disponivel).length;
 
-        function resetarTudo() {
-            if (confirm("Apagar TODAS as doações e voltar ao início?")) {
-                localStorage.removeItem('doacoesCantinaCoral');
-                itens = JSON.parse(JSON.stringify(initialItems));
-                renderizarTudo();
-                atualizarContadores();
-            }
-        }
+  document.getElementById("total").innerText = itens.length;
+}
 
-        // Inicializar
-        window.onload = () => {
-            carregarDados();
-            renderizarTudo();
-            atualizarContadores();
-        };
-    </script>
+// RESET (opcional)
+function resetar() {
+  db.ref("doacoes").remove();
+}
+
+// START
+iniciarItens();
+renderizar();
+atualizarContadores();
+</script>
+
 </body>
 </html>
